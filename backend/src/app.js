@@ -1,0 +1,18 @@
+const express = require('express');
+const cors = require('cors');
+const { PORT } = require('./config/env');
+
+const app = express();
+
+app.use(cors());
+app.use(express.json());
+
+app.get('/', (req, res) => {
+  res.status(200).json({
+    success: true,
+    message: 'ServiceHub API is running',
+  });
+});
+
+
+module.exports = { app, PORT };
