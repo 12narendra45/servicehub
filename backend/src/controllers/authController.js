@@ -1,7 +1,7 @@
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
 const { JWT_SECRET } = require('../config/env');
-
+const bcrypt=require('bcrypt');
 const generateToken = (user) => {
   return jwt.sign(
     { id: user._id, email: user.email, role: user.role },
@@ -28,11 +28,12 @@ const registerUser = async (req, res) => {
         message: 'Email already exists.',
       });
     }
-
+       
+    const hashpassword=await bcrypt.hash(password,10);
     const user = await User.create({
       name,
       email: email.toLowerCase(),
-      password,
+      password:hashpassword,
       phone,
       role,
     });
@@ -78,7 +79,7 @@ const loginUser = async (req, res) => {
       });
     }
 
-    const isMatch = await user.comparePassword(password);
+    const isMatch = await bcrypt.compare(password,user.password)
     if (!isMatch) {
       return res.status(401).json({
         success: false,
